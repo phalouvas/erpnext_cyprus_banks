@@ -1,0 +1,18 @@
+include MANIFEST.in
+include requirements.txt
+include *.json
+include *.md
+include *.py
+include *.txt
+recursive-include erpnext_hellenic_bank *.css
+recursive-include erpnext_hellenic_bank *.csv
+recursive-include erpnext_hellenic_bank *.html
+recursive-include erpnext_hellenic_bank *.ico
+recursive-include erpnext_hellenic_bank *.js
+recursive-include erpnext_hellenic_bank *.json
+recursive-include erpnext_hellenic_bank *.md
+recursive-include erpnext_hellenic_bank *.png
+recursive-include erpnext_hellenic_bank *.py
+recursive-include erpnext_hellenic_bank *.svg
+recursive-include erpnext_hellenic_bank *.txt
+recursive-exclude erpnext_hellenic_bank *.pyc
