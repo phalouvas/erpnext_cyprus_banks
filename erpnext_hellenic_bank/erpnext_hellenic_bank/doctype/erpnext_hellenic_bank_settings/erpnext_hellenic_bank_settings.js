@@ -20,6 +20,26 @@ frappe.ui.form.on('Erpnext Hellenic Bank Settings', {
 			}
 		});
 
+		frm.add_custom_button(__('Create Accounts'), function () {
+			frappe.confirm('Are you sure you want to proceed?', function() {
+				frappe.call({
+					method: "erpnext_hellenic_bank.erpnext_hellenic_bank.doctype.erpnext_hellenic_bank_settings.erpnext_hellenic_bank_settings.create_accounts",
+					args: {
+						// your arguments here
+					},
+					callback: function(response) {
+						if (response.message.errors === null) {
+							frappe.msgprint("You succesfully created the bank accounts.");
+						} else {
+							frappe.msgprint("Something went wrong.", 'Error');
+						}
+					}
+				});		
+			}, function() {
+				// action to perform if No is selected
+			});			
+		});
+
 		let urlParams = new URLSearchParams(window.location.search);
 		let new_code = urlParams.get('code');
 		if (new_code !== null) {

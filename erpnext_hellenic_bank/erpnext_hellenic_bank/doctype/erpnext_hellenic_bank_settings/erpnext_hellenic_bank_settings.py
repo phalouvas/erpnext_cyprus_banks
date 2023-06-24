@@ -21,13 +21,16 @@ def base64_encode(string):
     encoded_string = encoded_bytes.decode('utf-8')  # Convert the encoded bytes back to a string
     return encoded_string
 
-def get_base_url(erpnext_hellenic_bank_settings):
+def get_base_url_auth(erpnext_hellenic_bank_settings):
 	return "https://sandbox-oauth.hellenicbank.com" if erpnext_hellenic_bank_settings.is_sandbox else "https://oauthprod.hellenicbank.com"
+
+def get_base_url_api(erpnext_hellenic_bank_settings):
+	return "https://sandbox-apis.hellenicbank.com" if erpnext_hellenic_bank_settings.is_sandbox else "https://apisprod.hellenicbank.com"
 
 @frappe.whitelist()
 def get_authorization_code():
 	erpnext_hellenic_bank_settings = frappe.get_doc("Erpnext Hellenic Bank Settings")
-	url = get_base_url(erpnext_hellenic_bank_settings) + "/token/exchange"
+	url = get_base_url_auth(erpnext_hellenic_bank_settings) + "/token/exchange"
 	payload = {
 		"grant_type": "authorization_code",
 		"redirect_uri": frappe.utils.get_url() + "/app/erpnext-hellenic-bank-settings",
@@ -54,7 +57,7 @@ def refresh_token():
 	now = datetime.now()
 	expires_at = datetime.fromtimestamp(authorization_code["expires_at"] / 1000)
 	if now > expires_at:
-		url = get_base_url(erpnext_hellenic_bank_settings) + "/token"
+		url = get_base_url_auth(erpnext_hellenic_bank_settings) + "/token"
 		payload = {
 			"grant_type": "refresh_token",
 			"refresh_token": authorization_code["refresh_token"]
@@ -72,4 +75,35 @@ def refresh_token():
 	else:
 		return authorization_code
 
-	pass
+@frappe.whitelist()
+def create_accounts():
+	refresh_token()
+	erpnext_hellenic_bank_settings = frappe.get_doc("Erpnext Hellenic Bank Settings")
+	authorization_code = json.loads(erpnext_hellenic_bank_settings.authorization_code)
+	url = get_base_url_api(erpnext_hellenic_bank_settings) + "/v1/b2b/account/list"
+	payload = {}
+	headers = {
+		"Authorization": "Bearer " + authorization_code["access_token"],
+		"x-client-id": erpnext_hellenic_bank_settings.client_id	
+	}
+
+	response = requests.get(url, params=payload, headers=headers)
+	response_json = response.json()
+	if (response.status_code != 200):
+		return response_json
+	
+	accounts = response_json["payload"]["accounts"]
+	for account in accounts:
+		bank_account = frappe.get_doc({
+			'doctype': 'Bank Account',
+			'bank': erpnext_hellenic_bank_settings.bank,
+			'bank_account_no': account["accountNumber"],
+			'account_name': account["accountName"],
+			'currency': account["accountCurrencyCodes"],
+			'iban': account["iban"]
+		})
+
+		if not frappe.db.exists('Bank Account', account["accountName"] + " - " + erpnext_hellenic_bank_settings.bank):
+			bank_account.insert()
+			
+	return response_json
