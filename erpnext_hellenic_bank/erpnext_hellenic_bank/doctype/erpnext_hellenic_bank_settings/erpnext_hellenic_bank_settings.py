@@ -1,0 +1,75 @@
+# Copyright (c) 2023, KAINOTOMO PH LTD and contributors
+# For license information, please see license.txt
+
+import frappe
+from frappe.model.document import Document
+import base64
+import requests
+import json
+from datetime import datetime
+
+class ErpnextHellenicBankSettings(Document):
+
+	def onload(self):
+		return
+
+	pass
+
+def base64_encode(string):
+    string_bytes = string.encode('utf-8')  # Convert string to bytes using UTF-8 encoding
+    encoded_bytes = base64.b64encode(string_bytes)  # Base64 encode the bytes
+    encoded_string = encoded_bytes.decode('utf-8')  # Convert the encoded bytes back to a string
+    return encoded_string
+
+def get_base_url(erpnext_hellenic_bank_settings):
+	return "https://sandbox-oauth.hellenicbank.com" if erpnext_hellenic_bank_settings.is_sandbox else "https://oauthprod.hellenicbank.com"
+
+@frappe.whitelist()
+def get_authorization_code():
+	erpnext_hellenic_bank_settings = frappe.get_doc("Erpnext Hellenic Bank Settings")
+	url = get_base_url(erpnext_hellenic_bank_settings) + "/token/exchange"
+	payload = {
+		"grant_type": "authorization_code",
+		"redirect_uri": frappe.utils.get_url() + "/app/erpnext-hellenic-bank-settings",
+		"code": erpnext_hellenic_bank_settings.code
+	}
+	string_to_encode = erpnext_hellenic_bank_settings.client_id + ':' + erpnext_hellenic_bank_settings.client_secret
+	headers = {
+		"Authorization": "Basic " + base64.b64encode(string_to_encode.encode("utf-8")).decode("utf-8")
+		
+	}
+
+	response = requests.post(url, data=payload, headers=headers)
+	if (response.status_code != 200):
+		return response.json()
+	frappe.db.set_value('Erpnext Hellenic Bank Settings', erpnext_hellenic_bank_settings.name, 'authorization_code', response.text)
+	return response.json()
+
+@frappe.whitelist()
+def refresh_token():
+	erpnext_hellenic_bank_settings = frappe.get_doc("Erpnext Hellenic Bank Settings")
+	authorization_code = json.loads(erpnext_hellenic_bank_settings.authorization_code)
+
+	# Check if the token is expired
+	now = datetime.now()
+	expires_at = datetime.fromtimestamp(authorization_code["expires_at"] / 1000)
+	if now > expires_at:
+		url = get_base_url(erpnext_hellenic_bank_settings) + "/token"
+		payload = {
+			"grant_type": "refresh_token",
+			"refresh_token": authorization_code["refresh_token"]
+		}
+		string_to_encode = erpnext_hellenic_bank_settings.client_id + ':' + erpnext_hellenic_bank_settings.client_secret
+		headers = {
+			"Authorization": "Basic " + base64.b64encode(string_to_encode.encode("utf-8")).decode("utf-8")
+		}
+
+		response = requests.post(url, data=payload, headers=headers)
+		if (response.status_code != 200):
+			return response.json()
+		frappe.db.set_value('Erpnext Hellenic Bank Settings', erpnext_hellenic_bank_settings.name, 'authorization_code', response.text)
+		return response.json()
+	else:
+		return authorization_code
+
+	pass

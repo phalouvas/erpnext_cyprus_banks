@@ -39,17 +39,17 @@
   {
    "fieldname": "authorization_code",
    "fieldtype": "JSON",
-   "label": "Authorization Code",
-   "read_only": 1
+   "hidden": 1,
+   "label": "Authorization Code"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2023-06-24 07:00:21.785263",
+ "modified": "2023-06-24 10:05:54.349054",
  "modified_by": "Administrator",
  "module": "Erpnext Hellenic Bank",
- "name": "Settings",
+ "name": "Erpnext Hellenic Bank Settings",
  "owner": "Administrator",
  "permissions": [
   {
