@@ -100,7 +100,8 @@ def create_accounts():
 			'bank_account_no': account["accountNumber"],
 			'account_name': account["accountName"],
 			'currency': account["accountCurrencyCodes"],
-			'iban': account["iban"]
+			'iban': account["iban"],
+			'is_company_account': True
 		})
 
 		if not frappe.db.exists('Bank Account', account["accountName"] + " - " + erpnext_hellenic_bank_settings.bank):
