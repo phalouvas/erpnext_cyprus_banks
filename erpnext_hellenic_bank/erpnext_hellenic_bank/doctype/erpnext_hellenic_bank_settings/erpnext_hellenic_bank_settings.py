@@ -117,3 +117,92 @@ def create_accounts():
 			bank_account.insert()
 			
 	return response_json
+
+@frappe.whitelist()
+def get_bank_transactions(bank_account, bank_statement_from_date, bank_statement_to_date):
+
+	#make_sample_payment()
+
+	bank_account_doc = frappe.get_doc("Bank Account", bank_account)
+	dateFrom = datetime.strptime(bank_statement_from_date, '%Y-%m-%d').strftime('%Y%m%d0000')
+	dateTo = datetime.strptime(bank_statement_to_date, '%Y-%m-%d').strftime('%Y%m%d2359')
+
+	refresh_token()
+	erpnext_hellenic_bank_settings = frappe.get_doc("Erpnext Hellenic Bank Settings")
+	authorization_code = json.loads(erpnext_hellenic_bank_settings.authorization_code)
+	url = get_base_url_api(erpnext_hellenic_bank_settings) + "/v1/b2b/account/report"
+	payload = {
+		"dateTo": dateTo,
+		"dateFrom": dateFrom,
+		"account": bank_account_doc.iban
+	}
+	headers = {
+		"Authorization": "Bearer " + authorization_code["access_token"],
+		"x-client-id": erpnext_hellenic_bank_settings.client_id	
+	}
+
+	response = requests.get(url, params=payload, headers=headers)
+	response_json = response.json()
+	if (response.status_code != 200):
+		return response_json
+	
+	transactions = response_json["payload"]["transactions"]
+	for transaction in transactions:
+		bank_transaction = frappe.get_doc({
+			"doctype": "Bank Transaction",
+			"bank_account": bank_account,
+			"status": "Pending",
+			"date": transaction["transactionValueDate"],
+			"reference_number": transaction["customerReference"],
+			"description": transaction["paymentNotes"],
+		})
+		amount = transaction["transactionAmount"]
+		if amount > 0:
+			bank_transaction.deposit = abs(amount)
+		else:
+			bank_transaction.withdrawal = abs(amount)
+
+		bank_transaction.insert()
+		bank_transaction.submit()
+			
+	return response_json
+
+def make_sample_payment():
+	refresh_token()
+	erpnext_hellenic_bank_settings = frappe.get_doc("Erpnext Hellenic Bank Settings")
+	authorization_code = json.loads(erpnext_hellenic_bank_settings.authorization_code)
+	url = get_base_url_api(erpnext_hellenic_bank_settings) + "/v1/b2b/credit/transfer"
+	payload = {
+		"executionDate": "2023-06-25",
+		"beneficiaryAddress": "Customer Address",
+		"amount": "23.90",
+		"beneficiaryBankAddress": "Bank Address",
+		"beneficiaryCountry": "CY",
+		"clearingHouseCode": "",
+		"debtorAccount": "CY68005000121234567890123456",
+		"beneficiaryAccount": "CY48005000121234504938475123",
+		"beneficiaryName": "JOHN DOE",
+		"beneficiaryBankCountry": "CY",
+		"beneficiaryBankName": "Hellenic Bank",
+		"transactionUrgency": "S",
+		"currency": "EUR",
+		"paymentNotes": "notes",
+		"debtorBic": "HEBACY2N",
+		"beneficiaryBankBic": "HEBACY2N",
+		"intermediaryInstitutionBic": "HEBACY2N",
+		"emailConfirmation": "",
+		"charges": "O",
+		"customerReference": "uniqueValue_5",
+		"faxConfirmation": ""
+	}
+	headers = {
+		"Authorization": "Bearer " + authorization_code["access_token"],
+		"x-client-id": erpnext_hellenic_bank_settings.client_id,
+		'Content-Type': 'application/json'
+	}
+
+	response = requests.post(url, json=payload, headers=headers)
+	response_json = response.json()
+	if (response.status_code != 200):
+		return response_json
+	return response_json
