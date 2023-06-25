@@ -67,5 +67,15 @@ frappe.ui.form.on('Erpnext Hellenic Bank Settings', {
 				});
 		}
 
+	},
+	onload: function(frm) {
+		frm.set_query('parent_account', function(doc) {
+			return {
+				filters: {
+					"is_group": 1,
+					"company": doc.company
+				}
+			};
+		});
 	}
 });

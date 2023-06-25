@@ -7,6 +7,7 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "parent_account",
   "bank",
   "is_sandbox",
   "client_id",
@@ -54,12 +55,20 @@
    "label": "Bank",
    "options": "Bank",
    "reqd": 1
+  },
+  {
+   "fieldname": "parent_account",
+   "fieldtype": "Link",
+   "ignore_user_permissions": 1,
+   "label": "Parent Account",
+   "options": "Account",
+   "reqd": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2023-06-24 14:55:18.229059",
+ "modified": "2023-06-25 05:55:56.934872",
  "modified_by": "Administrator",
  "module": "Erpnext Hellenic Bank",
  "name": "Erpnext Hellenic Bank Settings",
