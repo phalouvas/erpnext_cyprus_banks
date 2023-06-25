@@ -94,17 +94,16 @@ def create_accounts():
 	
 	accounts = response_json["payload"]["accounts"]
 	for account in accounts:
-		bank_account = frappe.get_doc({
-			'doctype': 'Bank Account',
-			'bank': erpnext_hellenic_bank_settings.bank,
-			'bank_account_no': account["accountNumber"],
-			'account_name': account["accountName"],
-			'currency': account["accountCurrencyCodes"],
-			'iban': account["iban"],
-			'is_company_account': True
-		})
-
 		if not frappe.db.exists('Bank Account', account["accountName"] + " - " + erpnext_hellenic_bank_settings.bank):
+			bank_account = frappe.get_doc({
+				'doctype': 'Bank Account',
+				'bank': erpnext_hellenic_bank_settings.bank,
+				'bank_account_no': account["accountNumber"],
+				'account_name': account["accountName"],
+				'currency': account["accountCurrencyCodes"],
+				'iban': account["iban"],
+				'is_company_account': True
+			})
 			bank_account.insert()
 			
 	return response_json
