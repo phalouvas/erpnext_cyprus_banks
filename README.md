@@ -1,6 +1,6 @@
-## Erpnext Hellenic Bank
+## ERPNext Cyprus Banks
 
-ERPNext Hellenic Bank integration
+ERPNext Cyprus Banks Integration
 
 #### License
 

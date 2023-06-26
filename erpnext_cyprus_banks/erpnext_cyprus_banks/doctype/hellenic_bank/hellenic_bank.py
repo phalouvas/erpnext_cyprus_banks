@@ -29,7 +29,7 @@ def get_base_url_api(erpnext_hellenic_bank_settings):
 
 @frappe.whitelist()
 def get_authorization_code():
-	erpnext_hellenic_bank_settings = frappe.get_doc("Erpnext Hellenic Bank Settings")
+	erpnext_hellenic_bank_settings = frappe.get_doc("Hellenic Bank")
 	url = get_base_url_auth(erpnext_hellenic_bank_settings) + "/token/exchange"
 	payload = {
 		"grant_type": "authorization_code",
@@ -45,12 +45,12 @@ def get_authorization_code():
 	response = requests.post(url, data=payload, headers=headers)
 	if (response.status_code != 200):
 		return response.json()
-	frappe.db.set_value('Erpnext Hellenic Bank Settings', erpnext_hellenic_bank_settings.name, 'authorization_code', response.text)
+	frappe.db.set_value('Hellenic Bank', erpnext_hellenic_bank_settings.name, 'authorization_code', response.text)
 	return response.json()
 
 @frappe.whitelist()
 def refresh_token():
-	erpnext_hellenic_bank_settings = frappe.get_doc("Erpnext Hellenic Bank Settings")
+	erpnext_hellenic_bank_settings = frappe.get_doc("Hellenic Bank")
 	authorization_code = json.loads(erpnext_hellenic_bank_settings.authorization_code)
 
 	# Check if the token is expired
@@ -70,7 +70,7 @@ def refresh_token():
 		response = requests.post(url, data=payload, headers=headers)
 		if (response.status_code != 200):
 			return response.json()
-		frappe.db.set_value('Erpnext Hellenic Bank Settings', erpnext_hellenic_bank_settings.name, 'authorization_code', response.text)
+		frappe.db.set_value('Hellenic Bank', erpnext_hellenic_bank_settings.name, 'authorization_code', response.text)
 		return response.json()
 	else:
 		return authorization_code
@@ -78,7 +78,7 @@ def refresh_token():
 @frappe.whitelist()
 def create_accounts():
 	refresh_token()
-	erpnext_hellenic_bank_settings = frappe.get_doc("Erpnext Hellenic Bank Settings")
+	erpnext_hellenic_bank_settings = frappe.get_doc("Hellenic Bank")
 	authorization_code = json.loads(erpnext_hellenic_bank_settings.authorization_code)
 	url = get_base_url_api(erpnext_hellenic_bank_settings) + "/v1/b2b/account/list"
 	payload = {}
@@ -128,7 +128,7 @@ def get_bank_transactions(bank_account, bank_statement_from_date, bank_statement
 	dateTo = datetime.strptime(bank_statement_to_date, '%Y-%m-%d').strftime('%Y%m%d2359')
 
 	refresh_token()
-	erpnext_hellenic_bank_settings = frappe.get_doc("Erpnext Hellenic Bank Settings")
+	erpnext_hellenic_bank_settings = frappe.get_doc("Hellenic Bank")
 	authorization_code = json.loads(erpnext_hellenic_bank_settings.authorization_code)
 	url = get_base_url_api(erpnext_hellenic_bank_settings) + "/v1/b2b/account/report"
 	payload = {
@@ -180,7 +180,7 @@ def get_bank_transactions(bank_account, bank_statement_from_date, bank_statement
 
 def make_sample_payment():
 	refresh_token()
-	erpnext_hellenic_bank_settings = frappe.get_doc("Erpnext Hellenic Bank Settings")
+	erpnext_hellenic_bank_settings = frappe.get_doc("Hellenic Bank")
 	authorization_code = json.loads(erpnext_hellenic_bank_settings.authorization_code)
 	url = get_base_url_api(erpnext_hellenic_bank_settings) + "/v1/b2b/credit/transfer"
 	payload = {

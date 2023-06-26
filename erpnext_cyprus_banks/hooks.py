@@ -1,9 +1,9 @@
 from . import __version__ as app_version
 
-app_name = "erpnext_hellenic_bank"
-app_title = "Erpnext Hellenic Bank"
+app_name = "cyprus_banks"
+app_title = "ERPNext Cyprus Banks"
 app_publisher = "KAINOTOMO PH LTD"
-app_description = "ERPNext Hellenic Bank integration"
+app_description = "ERPNext Cyprus Banks Integration"
 app_email = "info@kainotomo.com"
 app_license = "MIT"
 
@@ -11,15 +11,15 @@ app_license = "MIT"
 # ------------------
 
 # include js, css files in header of desk.html
-# app_include_css = "/assets/erpnext_hellenic_bank/css/erpnext_hellenic_bank.css"
-# app_include_js = "/assets/erpnext_hellenic_bank/js/erpnext_hellenic_bank.js"
+# app_include_css = "/assets/cyprus_banks/css/cyprus_banks.css"
+# app_include_js = "/assets/cyprus_banks/js/cyprus_banks.js"
 
 # include js, css files in header of web template
-# web_include_css = "/assets/erpnext_hellenic_bank/css/erpnext_hellenic_bank.css"
-# web_include_js = "/assets/erpnext_hellenic_bank/js/erpnext_hellenic_bank.js"
+# web_include_css = "/assets/cyprus_banks/css/cyprus_banks.css"
+# web_include_js = "/assets/cyprus_banks/js/cyprus_banks.js"
 
 # include custom scss in every website theme (without file extension ".scss")
-# website_theme_scss = "erpnext_hellenic_bank/public/scss/website"
+# website_theme_scss = "cyprus_banks/public/scss/website"
 
 # include js, css files in header of web form
 # webform_include_js = {"doctype": "public/js/doctype.js"}
@@ -56,27 +56,27 @@ doctype_js = {"Bank Reconciliation Tool": "public/js/bank_reconciliation_tool.js
 
 # add methods and filters to jinja environment
 # jinja = {
-#	"methods": "erpnext_hellenic_bank.utils.jinja_methods",
-#	"filters": "erpnext_hellenic_bank.utils.jinja_filters"
+#	"methods": "cyprus_banks.utils.jinja_methods",
+#	"filters": "cyprus_banks.utils.jinja_filters"
 # }
 
 # Installation
 # ------------
 
-# before_install = "erpnext_hellenic_bank.install.before_install"
-# after_install = "erpnext_hellenic_bank.install.after_install"
+# before_install = "cyprus_banks.install.before_install"
+# after_install = "cyprus_banks.install.after_install"
 
 # Uninstallation
 # ------------
 
-# before_uninstall = "erpnext_hellenic_bank.uninstall.before_uninstall"
-# after_uninstall = "erpnext_hellenic_bank.uninstall.after_uninstall"
+# before_uninstall = "cyprus_banks.uninstall.before_uninstall"
+# after_uninstall = "cyprus_banks.uninstall.after_uninstall"
 
 # Desk Notifications
 # ------------------
 # See frappe.core.notifications.get_notification_config
 
-# notification_config = "erpnext_hellenic_bank.notifications.get_notification_config"
+# notification_config = "cyprus_banks.notifications.get_notification_config"
 
 # Permissions
 # -----------
@@ -115,39 +115,39 @@ doctype_js = {"Bank Reconciliation Tool": "public/js/bank_reconciliation_tool.js
 
 # scheduler_events = {
 #	"all": [
-#		"erpnext_hellenic_bank.tasks.all"
+#		"cyprus_banks.tasks.all"
 #	],
 #	"daily": [
-#		"erpnext_hellenic_bank.tasks.daily"
+#		"cyprus_banks.tasks.daily"
 #	],
 #	"hourly": [
-#		"erpnext_hellenic_bank.tasks.hourly"
+#		"cyprus_banks.tasks.hourly"
 #	],
 #	"weekly": [
-#		"erpnext_hellenic_bank.tasks.weekly"
+#		"cyprus_banks.tasks.weekly"
 #	],
 #	"monthly": [
-#		"erpnext_hellenic_bank.tasks.monthly"
+#		"cyprus_banks.tasks.monthly"
 #	],
 # }
 
 # Testing
 # -------
 
-# before_tests = "erpnext_hellenic_bank.install.before_tests"
+# before_tests = "cyprus_banks.install.before_tests"
 
 # Overriding Methods
 # ------------------------------
 #
 # override_whitelisted_methods = {
-#	"frappe.desk.doctype.event.event.get_events": "erpnext_hellenic_bank.event.get_events"
+#	"frappe.desk.doctype.event.event.get_events": "cyprus_banks.event.get_events"
 # }
 #
 # each overriding function accepts a `data` argument;
 # generated from the base implementation of the doctype dashboard,
 # along with any modifications made in other Frappe apps
 # override_doctype_dashboards = {
-#	"Task": "erpnext_hellenic_bank.task.get_dashboard_data"
+#	"Task": "cyprus_banks.task.get_dashboard_data"
 # }
 
 # exempt linked doctypes from being automatically cancelled
@@ -161,13 +161,13 @@ doctype_js = {"Bank Reconciliation Tool": "public/js/bank_reconciliation_tool.js
 
 # Request Events
 # ----------------
-# before_request = ["erpnext_hellenic_bank.utils.before_request"]
-# after_request = ["erpnext_hellenic_bank.utils.after_request"]
+# before_request = ["cyprus_banks.utils.before_request"]
+# after_request = ["cyprus_banks.utils.after_request"]
 
 # Job Events
 # ----------
-# before_job = ["erpnext_hellenic_bank.utils.before_job"]
-# after_job = ["erpnext_hellenic_bank.utils.after_job"]
+# before_job = ["cyprus_banks.utils.before_job"]
+# after_job = ["cyprus_banks.utils.after_job"]
 
 # User Data Protection
 # --------------------
@@ -197,5 +197,5 @@ doctype_js = {"Bank Reconciliation Tool": "public/js/bank_reconciliation_tool.js
 # --------------------------------
 
 # auth_hooks = [
-#	"erpnext_hellenic_bank.auth.validate"
+#	"cyprus_banks.auth.validate"
 # ]

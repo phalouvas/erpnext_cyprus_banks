@@ -7,7 +7,7 @@ frappe.ui.form.on('Bank Reconciliation Tool', {
                 frm.doc.bank_statement_to_date
             ) {
                 frappe.call({
-                    method: "erpnext_hellenic_bank.erpnext_hellenic_bank.doctype.erpnext_hellenic_bank_settings.erpnext_hellenic_bank_settings.get_bank_transactions",
+                    method: "cyprus_banks.cyprus_banks.doctype.hellenic_bank.hellenic_bank.get_bank_transactions",
                     args: {
                         bank_account: frm.doc.bank_account,
                         bank_statement_from_date: frm.doc.bank_statement_from_date,

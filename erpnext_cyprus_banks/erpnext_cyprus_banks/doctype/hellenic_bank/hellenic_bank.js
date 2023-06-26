@@ -1,7 +1,7 @@
 // Copyright (c) 2023, KAINOTOMO PH LTD and contributors
 // For license information, please see license.txt
 
-frappe.ui.form.on('Erpnext Hellenic Bank Settings', {
+frappe.ui.form.on('Hellenic Bank', {
 	refresh: function (frm) {
 
 		frm.add_custom_button(__('Authorize'), function () {
@@ -23,7 +23,7 @@ frappe.ui.form.on('Erpnext Hellenic Bank Settings', {
 		frm.add_custom_button(__('Create Accounts'), function () {
 			frappe.confirm('Are you sure you want to proceed?', function() {
 				frappe.call({
-					method: "erpnext_hellenic_bank.erpnext_hellenic_bank.doctype.erpnext_hellenic_bank_settings.erpnext_hellenic_bank_settings.create_accounts",
+					method: "cyprus_banks.cyprus_banks.doctype.hellenic_bank.hellenic_bank.create_accounts",
 					args: {
 						// your arguments here
 					},
@@ -43,14 +43,14 @@ frappe.ui.form.on('Erpnext Hellenic Bank Settings', {
 		let urlParams = new URLSearchParams(window.location.search);
 		let new_code = urlParams.get('code');
 		if (new_code !== null) {
-			frappe.db.get_single_value('Erpnext Hellenic Bank Settings', 'code')
+			frappe.db.get_single_value('Hellenic Bank', 'code')
 				.then(function (old_code) {
 					if ((urlParams.get('state') === "erpnext_state_b64_encoded") && (new_code !== old_code)) {
-						frappe.db.set_value('Erpnext Hellenic Bank Settings', '', 'code', urlParams.get('code'))
+						frappe.db.set_value('Hellenic Bank', '', 'code', urlParams.get('code'))
 							.then(r => {
 								let doc = r.message;
 								frappe.call({
-									method: "erpnext_hellenic_bank.erpnext_hellenic_bank.doctype.erpnext_hellenic_bank_settings.erpnext_hellenic_bank_settings.get_authorization_code",
+									method: "cyprus_banks.cyprus_banks.doctype.hellenic_bank.hellenic_bank.get_authorization_code",
 									args: {
 										// your arguments here
 									},

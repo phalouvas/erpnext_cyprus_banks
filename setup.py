@@ -3,13 +3,13 @@ from setuptools import setup, find_packages
 with open("requirements.txt") as f:
 	install_requires = f.read().strip().split("\n")
 
-# get version from __version__ variable in erpnext_hellenic_bank/__init__.py
-from erpnext_hellenic_bank import __version__ as version
+# get version from __version__ variable in cyprus_banks/__init__.py
+from cyprus_banks import __version__ as version
 
 setup(
-	name="erpnext_hellenic_bank",
+	name="cyprus_banks",
 	version=version,
-	description="ERPNext Hellenic Bank integration",
+	description="ERPNext Cyprus Banks Integration",
 	author="KAINOTOMO PH LTD",
 	author_email="info@kainotomo.com",
 	packages=find_packages(),
