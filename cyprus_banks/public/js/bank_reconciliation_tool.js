@@ -24,6 +24,10 @@ frappe.ui.form.on('Bank Reconciliation Tool', {
             } else {
                 frappe.msgprint("Bank Account, From Date and To Date are required.", 'Warning');
             }       
-        });
+        }, "Hellenic Bank");
+
+        frm.add_custom_button(__('Authorize'), function () {
+			frappe.set_route('Form', 'Hellenic Bank');
+		}, "Hellenic Bank");
     }
 });

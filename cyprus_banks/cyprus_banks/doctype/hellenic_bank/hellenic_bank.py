@@ -62,14 +62,15 @@ def refresh_token():
 			"grant_type": "refresh_token",
 			"refresh_token": authorization_code["refresh_token"]
 		}
-		string_to_encode = hellenic_bank.client_id + ':' + hellenic_bank.client_secret
+		string_to_encode = hellenic_bank.client_id + ':' + hellenic_bank.get_password("client_secret")
 		headers = {
 			"Authorization": "Basic " + base64.b64encode(string_to_encode.encode("utf-8")).decode("utf-8")
 		}
 
 		response = requests.post(url, data=payload, headers=headers)
+		response_json = response.json()
 		if (response.status_code != 200):
-			return response.json()
+			frappe.throw(response_json["error"] + " - Authorize and try again")
 		frappe.db.set_value('Hellenic Bank', hellenic_bank.name, 'authorization_code', response.text)
 		return response.json()
 	else:
@@ -120,8 +121,6 @@ def create_accounts():
 
 @frappe.whitelist()
 def get_bank_transactions(bank_account, bank_statement_from_date, bank_statement_to_date):
-
-	#make_sample_payment()
 
 	bank_account_doc = frappe.get_doc("Bank Account", bank_account)
 	dateFrom = datetime.strptime(bank_statement_from_date, '%Y-%m-%d').strftime('%Y%m%d0000')
@@ -178,33 +177,32 @@ def get_bank_transactions(bank_account, bank_statement_from_date, bank_statement
 			
 	return response_json
 
-def make_sample_payment():
+@frappe.whitelist()
+def single_payment(bank_account, party_bank_account, paid_amount, reference_no, reference_date, party_name):
+
+	debtorBank = frappe.db.get_value('Bank Account', bank_account, 'bank')
+	debtorBic = frappe.db.get_value('Bank', debtorBank, 'swift_number')
+	debtorAccount = frappe.db.get_value('Bank Account', bank_account, 'iban')
+
+	beneficiaryBank = frappe.db.get_value('Bank Account', party_bank_account, 'bank')
+	beneficiaryBankBic = frappe.db.get_value('Bank', beneficiaryBank, 'swift_number')
+	beneficiaryAccount = frappe.db.get_value('Bank Account', party_bank_account, 'iban') 
+
 	refresh_token()
 	hellenic_bank = frappe.get_doc("Hellenic Bank")
 	authorization_code = json.loads(hellenic_bank.authorization_code)
 	url = get_base_url_api(hellenic_bank) + "/v1/b2b/credit/transfer"
 	payload = {
-		"executionDate": "2023-06-26",
-		"beneficiaryAddress": "Customer Address",
-		"amount": "23.90",
-		"beneficiaryBankAddress": "Bank Address",
-		"beneficiaryCountry": "CY",
-		"clearingHouseCode": "",
-		"debtorAccount": "CY68005000121234567890123456",
-		"beneficiaryAccount": "CY48005000121234504938475123",
-		"beneficiaryName": "JOHN DOE",
-		"beneficiaryBankCountry": "CY",
-		"beneficiaryBankName": "Hellenic Bank",
-		"transactionUrgency": "S",
+		"executionDate": reference_date,
+		"amount": paid_amount,
+		"debtorAccount": debtorAccount,
+		"beneficiaryAccount": beneficiaryAccount,
+		"beneficiaryName": party_name,
 		"currency": "EUR",
-		"paymentNotes": "notes",
-		"debtorBic": "HEBACY2N",
-		"beneficiaryBankBic": "HEBACY2N",
-		"intermediaryInstitutionBic": "HEBACY2N",
-		"emailConfirmation": "",
-		"charges": "O",
-		"customerReference": "uniqueValue_5",
-		"faxConfirmation": ""
+		"debtorBic": debtorBic,
+		"beneficiaryBankBic": beneficiaryBankBic,
+		"customerReference": reference_no,
+		"paymentNotes": reference_no
 	}
 	headers = {
 		"Authorization": "Bearer " + authorization_code["access_token"],
@@ -215,5 +213,5 @@ def make_sample_payment():
 	response = requests.post(url, json=payload, headers=headers)
 	response_json = response.json()
 	if (response.status_code != 200):
-		return response_json
+		frappe.throw(response_json["payload"]["message"])
 	return response_json
