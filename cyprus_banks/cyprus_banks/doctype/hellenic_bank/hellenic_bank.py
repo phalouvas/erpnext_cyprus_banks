@@ -8,7 +8,7 @@ import requests
 import json
 from datetime import datetime
 
-class ErpnextHellenicBankSettings(Document):
+class HellenicBank(Document):
 
 	def onload(self):
 		return
@@ -33,7 +33,7 @@ def get_authorization_code():
 	url = get_base_url_auth(hellenic_bank) + "/token/exchange"
 	payload = {
 		"grant_type": "authorization_code",
-		"redirect_uri": frappe.utils.get_url() + "/app/erpnext-hellenic-bank-settings",
+		"redirect_uri": frappe.utils.get_url() + "/app/hellenic-bank",
 		"code": hellenic_bank.code
 	}
 	string_to_encode = hellenic_bank.client_id + ':' + hellenic_bank.client_secret

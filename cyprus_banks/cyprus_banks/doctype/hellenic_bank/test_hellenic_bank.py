@@ -5,5 +5,5 @@
 from frappe.tests.utils import FrappeTestCase
 
 
-class TestErpnextHellenicBankSettings(FrappeTestCase):
+class TestHellenicBank(FrappeTestCase):
 	pass
