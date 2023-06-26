@@ -36,7 +36,7 @@ def get_authorization_code():
 		"redirect_uri": frappe.utils.get_url() + "/app/hellenic-bank",
 		"code": hellenic_bank.code
 	}
-	string_to_encode = hellenic_bank.client_id + ':' + hellenic_bank.client_secret
+	string_to_encode = hellenic_bank.client_id + ':' + hellenic_bank.get_password("client_secret")
 	headers = {
 		"Authorization": "Basic " + base64.b64encode(string_to_encode.encode("utf-8")).decode("utf-8")
 		

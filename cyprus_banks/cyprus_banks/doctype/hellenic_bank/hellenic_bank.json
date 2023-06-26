@@ -31,8 +31,7 @@
   },
   {
    "fieldname": "client_secret",
-   "fieldtype": "Data",
-   "in_list_view": 1,
+   "fieldtype": "Password",
    "label": "Client Secret",
    "reqd": 1
   },
@@ -68,7 +67,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2023-06-25 05:55:56.934872",
+ "modified": "2023-06-26 07:14:47.381074",
  "modified_by": "Administrator",
  "module": "Cyprus Banks",
  "name": "Hellenic Bank",

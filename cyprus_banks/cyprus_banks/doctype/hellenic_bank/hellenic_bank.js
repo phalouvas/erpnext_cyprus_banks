@@ -10,7 +10,6 @@ frappe.ui.form.on('Hellenic Bank', {
 				let is_sandbox = frm.get_field('is_sandbox').value;
 				let base_url = is_sandbox ? "https://sandbox-oauth.hellenicbank.com" : "https://oauthprod.hellenicbank.com";
 				let client_id = frm.get_field('client_id').value;
-				let client_secret = frm.get_field('client_secret').value;
 				let href = base_url + "/oauth2/auth?response_type=code&client_id=" + client_id +
 					"&redirect_uri=" + window.location.href +
 					"&scope=b2b.account.details,b2b.credit.transfer.mass,b2b.account.list,b2b.report.account.statements,b2b.credit.transfer.cancel,b2b.report.credit.transfer.single,b2b.credit.transfer.single,b2b.funds.availability,b2b.report.credit.transfer.mass" +
