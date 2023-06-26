@@ -1,6 +1,6 @@
 frappe.ui.form.on('Bank Reconciliation Tool', {
     refresh: function (frm) {
-        frm.add_custom_button('Retrieve Bank Transactions', function () {
+        frm.add_custom_button(__('Retrieve Bank Transactions'), function () {
             if (
                 frm.doc.bank_account &&
                 frm.doc.bank_statement_from_date &&
