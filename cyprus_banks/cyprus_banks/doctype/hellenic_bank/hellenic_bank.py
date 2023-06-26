@@ -184,7 +184,7 @@ def make_sample_payment():
 	authorization_code = json.loads(hellenic_bank.authorization_code)
 	url = get_base_url_api(hellenic_bank) + "/v1/b2b/credit/transfer"
 	payload = {
-		"executionDate": "2023-06-25",
+		"executionDate": "2023-06-26",
 		"beneficiaryAddress": "Customer Address",
 		"amount": "23.90",
 		"beneficiaryBankAddress": "Bank Address",
