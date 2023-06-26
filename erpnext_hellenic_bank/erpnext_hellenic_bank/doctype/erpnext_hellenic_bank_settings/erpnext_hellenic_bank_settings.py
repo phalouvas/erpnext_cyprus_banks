@@ -148,22 +148,33 @@ def get_bank_transactions(bank_account, bank_statement_from_date, bank_statement
 	
 	transactions = response_json["payload"]["transactions"]
 	for transaction in transactions:
-		bank_transaction = frappe.get_doc({
-			"doctype": "Bank Transaction",
-			"bank_account": bank_account,
-			"status": "Pending",
-			"date": transaction["transactionValueDate"],
-			"reference_number": transaction["customerReference"],
-			"description": transaction["paymentNotes"],
-		})
+		filters = {
+			'date': transaction["transactionValueDate"],
+			'reference_number': transaction["customerReference"]
+		}
 		amount = transaction["transactionAmount"]
 		if amount > 0:
-			bank_transaction.deposit = abs(amount)
+			filters["deposit"] = abs(amount)
 		else:
-			bank_transaction.withdrawal = abs(amount)
+			filters["withdrawal"] = abs(amount)
+		existing = frappe.db.get_list('Bank Transaction', filters=filters)
 
-		bank_transaction.insert()
-		bank_transaction.submit()
+		if (len(existing) == 0):
+			bank_transaction = frappe.get_doc({
+				"doctype": "Bank Transaction",
+				"bank_account": bank_account,
+				"status": "Pending",
+				"date": transaction["transactionValueDate"],
+				"reference_number": transaction["customerReference"],
+				"description": transaction["paymentNotes"],
+			})
+			if amount > 0:
+				bank_transaction.deposit = abs(amount)
+			else:
+				bank_transaction.withdrawal = abs(amount)
+
+			bank_transaction.insert()
+			bank_transaction.submit()
 			
 	return response_json
 
