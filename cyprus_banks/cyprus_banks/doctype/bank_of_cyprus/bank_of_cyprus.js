@@ -5,6 +5,20 @@ frappe.ui.form.on('Bank Of Cyprus', {
 	refresh: function (frm) {
 
 		frm.add_custom_button(__('Authorize'), function () {
+			frappe.call({
+				method: "cyprus_banks.cyprus_banks.doctype.bank_of_cyprus.bank_of_cyprus.get_access_token",
+				args: {
+					// your arguments here
+				},
+				callback: function (response) {
+					if (response.message.errors === null) {
+						frappe.msgprint("You succesfully created the bank accounts.");
+					} else {
+						frappe.msgprint("Something went wrong.", 'Error');
+					}
+				}
+			});
+			return;
 			let urlParams = new URLSearchParams(window.location.search);
 			if (urlParams.get('state') === null) {
 				let is_sandbox = frm.get_field('is_sandbox').value;
@@ -22,7 +36,7 @@ frappe.ui.form.on('Bank Of Cyprus', {
 		frm.add_custom_button(__('Create Accounts'), function () {
 			frappe.confirm('Are you sure you want to proceed?', function () {
 				frappe.call({
-					method: "cyprus_banks.cyprus_banks.doctype.hellenic_bank.hellenic_bank.create_accounts",
+					method: "cyprus_banks.cyprus_banks.doctype.bank_of_cyprus.bank_of_cyprus.create_accounts",
 					args: {
 						// your arguments here
 					},
@@ -45,23 +59,20 @@ frappe.ui.form.on('Bank Of Cyprus', {
 			frappe.db.get_single_value('Bank Of Cyprus', 'code')
 				.then(function (old_code) {
 					if ((urlParams.get('state') === "erpnext_state_b64_encoded") && (new_code !== old_code)) {
-						frappe.db.set_value('Bank Of Cyprus', '', 'code', urlParams.get('code'))
-							.then(r => {
-								let doc = r.message;
-								frappe.call({
-									method: "cyprus_banks.cyprus_banks.doctype.hellenic_bank.hellenic_bank.get_authorization_code",
-									args: {
-										// your arguments here
-									},
-									callback: function (response) {
-										if ('error' in response.message) {
-											frappe.msgprint(response.message.error);
-										} else {
-											frappe.msgprint("You succesfully received a new authorization code.");
-										}
+						let doc = r.message;
+							frappe.call({
+								method: "cyprus_banks.cyprus_banks.doctype.bank_of_cyprus.bank_of_cyprus.get_authorization_code",
+								args: {
+									code: new_code
+								},
+								callback: function (response) {
+									if ('error' in response.message) {
+										frappe.msgprint(response.message.error);
+									} else {
+										frappe.msgprint("You succesfully received a new authorization code.");
 									}
-								});
-							})
+								}
+							});
 					}
 				});
 		}

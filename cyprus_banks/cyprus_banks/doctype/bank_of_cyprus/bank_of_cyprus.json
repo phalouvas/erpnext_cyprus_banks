@@ -10,10 +10,13 @@
   "parent_account",
   "bank",
   "is_sandbox",
+  "user_id",
   "client_id",
   "client_secret",
   "code",
-  "authorization_code"
+  "authorization_code",
+  "token",
+  "subscription_id"
  ],
  "fields": [
   {
@@ -54,20 +57,34 @@
   {
    "fieldname": "code",
    "fieldtype": "Data",
-   "hidden": 1,
    "label": "Code"
   },
   {
    "fieldname": "authorization_code",
    "fieldtype": "JSON",
-   "hidden": 1,
    "label": "Authorization Code"
+  },
+  {
+   "fieldname": "token",
+   "fieldtype": "JSON",
+   "label": "Token"
+  },
+  {
+   "fieldname": "subscription_id",
+   "fieldtype": "JSON",
+   "label": "Subscription Id"
+  },
+  {
+   "fieldname": "user_id",
+   "fieldtype": "Data",
+   "label": "User Id",
+   "reqd": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2023-06-26 10:48:52.785921",
+ "modified": "2023-07-04 14:11:43.724984",
  "modified_by": "Administrator",
  "module": "Cyprus Banks",
  "name": "Bank Of Cyprus",
