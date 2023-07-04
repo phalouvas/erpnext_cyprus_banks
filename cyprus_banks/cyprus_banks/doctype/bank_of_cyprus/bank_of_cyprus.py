@@ -49,8 +49,8 @@ def get_subscription_id():
 		"app_name": "ERPNext Integration"
 	}
 	response = requests.post(url, json=payload, headers=headers)
-	if (response.status_code != 200):
-		return response.json()
+	if (response.status_code != 200 and response.status_code != 201):
+		frappe.throw("Something went wrong with Bank Of Cyprus authorization")
 	frappe.db.set_value('Bank Of Cyprus', bank_of_cyprus.name, 'subscription_id', response.text)
 	return response.json()
 

@@ -22,7 +22,8 @@ frappe.ui.form.on('Bank Of Cyprus', {
 							let href = base_url + "?response_type=code&client_id=" + client_id +
 								"&redirect_uri=" + window.location.href +
 								"&scope=UserOAuth2Security" +
-								"&subscriptionid=" + response.message.subscriptionId;
+								"&subscriptionid=" + response.message.subscriptionId +
+								"&state=erpnext_state_b64_encoded";
 							window.location.href = href;
 							frappe.validated = true;
 						}
