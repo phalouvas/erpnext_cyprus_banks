@@ -27,8 +27,16 @@ def get_subscription_id():
 		},
 		"payments": {
 			"limit": 99999999,
-			"currency": "EUR",
-			"amount": 999999999
+			"currency": "string",
+			"amount":99999999
+		},
+			"customerInformation": {
+			"personalInformation":True,
+			"identification":True,
+			"address":True,
+			"telephone":True,
+			"pepinformation":True,
+			"reviewInformation":True
 		}
 	}
 	headers = {
@@ -40,10 +48,10 @@ def get_subscription_id():
 		"journeyId": str(uuid.uuid4()),
 		"app_name": "ERPNext Integration"
 	}
-	response = requests.post(url, data=payload, headers=headers)
+	response = requests.post(url, json=payload, headers=headers)
 	if (response.status_code != 200):
 		return response.json()
-	frappe.db.set_value('Bank Of Cyprus', bank_of_cyprus.token, 'token', response.text)
+	frappe.db.set_value('Bank Of Cyprus', bank_of_cyprus.name, 'subscription_id', response.text)
 	return response.json()
 
 @frappe.whitelist()
