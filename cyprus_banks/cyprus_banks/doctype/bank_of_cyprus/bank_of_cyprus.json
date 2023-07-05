@@ -57,11 +57,13 @@
   {
    "fieldname": "code",
    "fieldtype": "Data",
+   "hidden": 1,
    "label": "Code"
   },
   {
    "fieldname": "subscription_id",
    "fieldtype": "JSON",
+   "hidden": 1,
    "label": "Subscription Id"
   },
   {
@@ -73,18 +75,20 @@
   {
    "fieldname": "access_token_1",
    "fieldtype": "JSON",
+   "hidden": 1,
    "label": "Access Token 1"
   },
   {
    "fieldname": "access_token_2",
    "fieldtype": "JSON",
+   "hidden": 1,
    "label": "Access Token 2"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2023-07-05 06:56:25.325478",
+ "modified": "2023-07-05 09:00:12.023558",
  "modified_by": "Administrator",
  "module": "Cyprus Banks",
  "name": "Bank Of Cyprus",

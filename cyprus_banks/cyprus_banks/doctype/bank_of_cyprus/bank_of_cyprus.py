@@ -150,7 +150,6 @@ def update_subscription():
 def create_accounts():
 	bank_of_cyprus = frappe.get_doc("Bank Of Cyprus")
 	access_token_1 = json.loads(bank_of_cyprus.access_token_1)
-	access_token_2 = json.loads(bank_of_cyprus.access_token_2)
 	subscription_id = json.loads(bank_of_cyprus.subscription_id)
 	url = get_base_url(bank_of_cyprus) + "/v1/accounts"
 	payload = {}
@@ -193,3 +192,65 @@ def create_accounts():
 			frappe.db.set_value('Bank Account', bank_account.name, 'iban', account["IBAN"])
 			
 	return accounts
+
+@frappe.whitelist()
+def get_bank_transactions(bank_account, bank_statement_from_date, bank_statement_to_date):
+
+	dateFrom = datetime.strptime(bank_statement_from_date, '%Y-%m-%d').strftime('%d/%m/%Y')
+	dateTo = datetime.strptime(bank_statement_to_date, '%Y-%m-%d').strftime('%d/%m/%Y')
+
+	bank_of_cyprus = frappe.get_doc("Bank Of Cyprus")
+	bank_account_doc = frappe.get_doc("Bank Account", bank_account)
+	access_token_1 = json.loads(bank_of_cyprus.access_token_1)
+	subscription_id = json.loads(bank_of_cyprus.subscription_id)
+	url = get_base_url(bank_of_cyprus) + "/v1/accounts/" + bank_account_doc.bank_account_no + "/statement"
+	payload = {
+		"startDate": dateFrom,
+		"endDate": dateTo,
+	}
+	headers = {
+		"Content-Type": "application/json",
+		"Authorization": "Bearer " + access_token_1["access_token"],
+		"subscriptionId": subscription_id["subscriptionId"],
+		"originUserId": bank_of_cyprus.user_id,
+		"journeyId": str(uuid.uuid4()),
+		"timeStamp": datetime.utcnow().isoformat()
+	}
+
+	response = requests.get(url, params=payload, headers=headers)
+	response_json = response.json()
+	if (response.status_code != 200):
+		frappe.throw(response.text)
+
+	transactions = response_json["transaction"]
+	for transaction in transactions:
+		valueDate = datetime.strptime(transaction["valueDate"], '%d/%m/%Y').strftime('%Y-%m-%d')
+		filters = {
+			'date': valueDate,
+			'reference_number': transaction["id"]
+		}
+		amount = transaction["transactionAmount"]["amount"]
+		if transaction["dcInd"] == "CREDIT":
+			filters["deposit"] = abs(amount)
+		else:
+			filters["withdrawal"] = abs(amount)
+		existing = frappe.db.get_list('Bank Transaction', filters=filters)
+
+		if (len(existing) == 0):
+			bank_transaction = frappe.get_doc({
+				"doctype": "Bank Transaction",
+				"bank_account": bank_account,
+				"status": "Pending",
+				"date": valueDate,
+				"reference_number": transaction["id"],
+				"description": transaction["description"],
+			})
+			if transaction["dcInd"] == "CREDIT":
+				bank_transaction.deposit = abs(amount)
+			else:
+				bank_transaction.withdrawal = abs(amount)
+
+			bank_transaction.insert()
+			bank_transaction.submit()
+			
+	return response_json
