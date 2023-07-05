@@ -6,7 +6,7 @@ frappe.ui.form.on('Bank Of Cyprus', {
 
 		frm.add_custom_button(__('Authorize'), function () {
 			frappe.call({
-				method: "cyprus_banks.cyprus_banks.doctype.bank_of_cyprus.bank_of_cyprus.get_access_token",
+				method: "cyprus_banks.cyprus_banks.doctype.bank_of_cyprus.bank_of_cyprus.get_access_token_1",
 				args: {
 					// your arguments here
 				},

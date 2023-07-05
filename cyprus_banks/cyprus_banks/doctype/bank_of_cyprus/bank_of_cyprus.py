@@ -17,7 +17,7 @@ def get_base_url(bank_of_cyprus):
 def get_subscription_id():
 	bank_of_cyprus = frappe.get_doc("Bank Of Cyprus")
 	url = get_base_url(bank_of_cyprus) + "/v1/subscriptions"
-	token = json.loads(bank_of_cyprus.token)
+	access_token_1 = json.loads(bank_of_cyprus.access_token_1)
 	payload = {
 		"accounts": {
 			"transactionHistory": True,
@@ -42,7 +42,7 @@ def get_subscription_id():
 	headers = {
 		"Accept": "application/json",
 		"Content-Type": "application/json",
-		"Authorization": "Bearer " + token["access_token"],
+		"Authorization": "Bearer " + access_token_1["access_token"],
 		"originUserId": bank_of_cyprus.user_id,
 		"timeStamp": datetime.utcnow().isoformat(),
 		"journeyId": str(uuid.uuid4()),
@@ -55,13 +55,16 @@ def get_subscription_id():
 	return response.json()
 
 @frappe.whitelist()
-def get_access_token():
+def get_access_token_1():
 	bank_of_cyprus = frappe.get_doc("Bank Of Cyprus")
 
-	token = json.loads(bank_of_cyprus.token)
-	expires_datetime = datetime.fromtimestamp(token["consented_on"] + token["expires_in"])
+	get_new_token = True
+	if (bank_of_cyprus.access_token_1 != None):
+		access_token_1 = json.loads(bank_of_cyprus.access_token_1)
+		expires_datetime = datetime.fromtimestamp(access_token_1["consented_on"] + access_token_1["expires_in"])
+		get_new_token = datetime.now() > expires_datetime
 
-	if datetime.now() > expires_datetime:
+	if get_new_token:
 		url = get_base_url(bank_of_cyprus) + "/oauth2/token"
 		payload = {
 			"grant_type": "client_credentials",
@@ -76,11 +79,6 @@ def get_access_token():
 		response = requests.post(url, data=payload, headers=headers)
 		if (response.status_code != 200):
 			return response.json()
-		frappe.db.set_value('Bank Of Cyprus', bank_of_cyprus.name, 'token', response.text)
+		frappe.db.set_value('Bank Of Cyprus', bank_of_cyprus.name, 'access_token_1', response.text)
 	
 	return get_subscription_id()
-
-	
-@frappe.whitelist()
-def get_authorization_code(code):
-	frappe.throw(code)
