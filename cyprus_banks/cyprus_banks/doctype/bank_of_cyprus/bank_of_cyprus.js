@@ -19,11 +19,11 @@ frappe.ui.form.on('Bank Of Cyprus', {
 							let is_sandbox = frm.get_field('is_sandbox').value;
 							let base_url = is_sandbox ? "https://sandbox-apis.bankofcyprus.com/df-boc-org-sb/sb/psd2/oauth2/authorize" : "https://apis.bankofcyprus.com/df-boc-org-prd/prod/psd2/oauth2/authorize";
 							let client_id = frm.get_field('client_id').value;
-							let href = base_url + "?response_type=code&client_id=" + client_id +
+							let href = base_url + "?response_type=code" +
 								"&redirect_uri=" + window.location.href +
 								"&scope=UserOAuth2Security" +
-								"&subscriptionid=" + response.message.subscriptionId +
-								"&state=erpnext_state_b64_encoded";
+								"&client_id=" + client_id +
+								"&subscriptionid=" + response.message.subscriptionId;
 							window.location.href = href;
 							frappe.validated = true;
 						}
