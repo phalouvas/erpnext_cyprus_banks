@@ -5,32 +5,45 @@ frappe.ui.form.on('Bank Of Cyprus', {
 	refresh: function (frm) {
 
 		frm.add_custom_button(__('Authorize'), function () {
-			let urlParams = new URLSearchParams(window.location.search);
-			if (urlParams.get('state') === null) {
-				let is_sandbox = frm.get_field('is_sandbox').value;
-				let base_url = is_sandbox ? "https://sandbox-apis.bankofcyprus.com/df-boc-org-sb/sb/psd2/oauth2/authorize" : "https://apis.bankofcyprus.com/df-boc-org-prd/prod/psd2/oauth2/authorize";
-				let client_id = frm.get_field('client_id').value;
-				let href = base_url + "?response_type=code&client_id=" + client_id +
-					"&redirect_uri=" + window.location.href +
-					"&scope=TPPOAuth2Security" +
-					"&state=erpnext_state_b64_encoded";
-				window.location.href = href;
-				frappe.validated = true;
-			}
+			frappe.call({
+				method: "cyprus_banks.cyprus_banks.doctype.bank_of_cyprus.bank_of_cyprus.get_access_token_1",
+				args: {
+					// your arguments here
+				},
+				callback: function (response) {
+					if (response.message.errors) {
+						frappe.msgprint("Something went wrong.", 'Error');
+					} else {
+						let urlParams = new URLSearchParams(window.location.search);
+						if (urlParams.get('state') === null) {
+							let is_sandbox = frm.get_field('is_sandbox').value;
+							let base_url = is_sandbox ? "https://sandbox-apis.bankofcyprus.com/df-boc-org-sb/sb/psd2/oauth2/authorize" : "https://apis.bankofcyprus.com/df-boc-org-prd/prod/psd2/oauth2/authorize";
+							let client_id = frm.get_field('client_id').value;
+							let href = base_url + "?response_type=code" +
+								"&redirect_uri=" + window.location.href +
+								"&scope=UserOAuth2Security" +
+								"&client_id=" + client_id +
+								"&subscriptionid=" + response.message.subscriptionId;
+							window.location.href = href;
+							frappe.validated = true;
+						}
+					}
+				}
+			});
 		});
 
 		frm.add_custom_button(__('Create Accounts'), function () {
 			frappe.confirm('Are you sure you want to proceed?', function () {
 				frappe.call({
-					method: "cyprus_banks.cyprus_banks.doctype.hellenic_bank.hellenic_bank.create_accounts",
+					method: "cyprus_banks.cyprus_banks.doctype.bank_of_cyprus.bank_of_cyprus.create_accounts",
 					args: {
 						// your arguments here
 					},
 					callback: function (response) {
-						if (response.message.errors === null) {
-							frappe.msgprint("You succesfully created the bank accounts.");
-						} else {
+						if (response.message.errors) {
 							frappe.msgprint("Something went wrong.", 'Error');
+						} else {
+							frappe.msgprint("You succesfully created the bank accounts.");
 						}
 					}
 				});
@@ -44,23 +57,23 @@ frappe.ui.form.on('Bank Of Cyprus', {
 		if (new_code !== null) {
 			frappe.db.get_single_value('Bank Of Cyprus', 'code')
 				.then(function (old_code) {
-					if ((urlParams.get('state') === "erpnext_state_b64_encoded") && (new_code !== old_code)) {
-						frappe.db.set_value('Bank Of Cyprus', '', 'code', urlParams.get('code'))
+					if (new_code !== old_code) {
+						frappe.db.set_value('Bank Of Cyprus', frm.doc.name, 'code', new_code)
 							.then(r => {
 								let doc = r.message;
 								frappe.call({
-									method: "cyprus_banks.cyprus_banks.doctype.hellenic_bank.hellenic_bank.get_authorization_code",
+									method: "cyprus_banks.cyprus_banks.doctype.bank_of_cyprus.bank_of_cyprus.get_access_token_2",
 									args: {
 										// your arguments here
 									},
-									callback: function (response) {
+									callback: function(response) {
 										if ('error' in response.message) {
 											frappe.msgprint(response.message.error);
 										} else {
-											frappe.msgprint("You succesfully received a new authorization code.");
+											frappe.msgprint("You succesfully created a new subscription.");
 										}
 									}
-								});
+								});								
 							})
 					}
 				});
