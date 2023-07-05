@@ -145,3 +145,51 @@ def update_subscription():
 		frappe.throw("Something went wrong with Bank Of Cyprus authorization")
 	frappe.db.set_value('Bank Of Cyprus', bank_of_cyprus.name, 'subscription_id', response.text)
 	return response.json()
+
+@frappe.whitelist()
+def create_accounts():
+	bank_of_cyprus = frappe.get_doc("Bank Of Cyprus")
+	access_token_1 = json.loads(bank_of_cyprus.access_token_1)
+	access_token_2 = json.loads(bank_of_cyprus.access_token_2)
+	subscription_id = json.loads(bank_of_cyprus.subscription_id)
+	url = get_base_url(bank_of_cyprus) + "/v1/accounts"
+	payload = {}
+	headers = {
+		"Content-Type": "application/json",
+		"Authorization": "Bearer " + access_token_1["access_token"],
+		"subscriptionId": subscription_id["subscriptionId"],
+		"originUserId": bank_of_cyprus.user_id,
+		"journeyId": str(uuid.uuid4()),
+		"timeStamp": datetime.utcnow().isoformat()
+	}
+
+	response = requests.get(url, params=payload, headers=headers)
+	if (response.status_code != 200):
+		frappe.throw(response.text)
+	
+	accounts = response.json()
+	for account in accounts:
+		if not frappe.db.exists('Bank Account', account["accountName"] + " - " + bank_of_cyprus.bank):
+			new_account = frappe.get_doc({
+				'doctype': 'Account',
+				'account_name': account["accountName"],
+				'parent_account': bank_of_cyprus.parent_account,
+				'account_type': 'Bank',
+				'account_currency': account["currency"],
+			})
+			new_account.insert()
+
+			bank_account = frappe.get_doc({
+				'doctype': 'Bank Account',
+				'account_name': account["accountName"],
+				'account': new_account.name,
+				'is_company_account': True,
+				'bank': bank_of_cyprus.bank,
+				'bank_account_no': account["accountId"],
+				'currency': account["currency"],
+				#'iban': account["IBAN"],
+			})
+			bank_account.insert()
+			frappe.db.set_value('Bank Account', bank_account.name, 'iban', account["IBAN"])
+			
+	return accounts

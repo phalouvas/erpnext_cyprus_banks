@@ -40,10 +40,10 @@ frappe.ui.form.on('Bank Of Cyprus', {
 						// your arguments here
 					},
 					callback: function (response) {
-						if (response.message.errors === null) {
-							frappe.msgprint("You succesfully created the bank accounts.");
-						} else {
+						if (response.message.errors) {
 							frappe.msgprint("Something went wrong.", 'Error');
+						} else {
+							frappe.msgprint("You succesfully created the bank accounts.");
 						}
 					}
 				});
@@ -70,7 +70,7 @@ frappe.ui.form.on('Bank Of Cyprus', {
 										if ('error' in response.message) {
 											frappe.msgprint(response.message.error);
 										} else {
-											frappe.msgprint("You succesfully received a new authorization code.");
+											frappe.msgprint("You succesfully created a new subscription.");
 										}
 									}
 								});								
