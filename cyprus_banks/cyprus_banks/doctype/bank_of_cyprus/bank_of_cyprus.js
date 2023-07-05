@@ -57,21 +57,9 @@ frappe.ui.form.on('Bank Of Cyprus', {
 		if (new_code !== null) {
 			frappe.db.get_single_value('Bank Of Cyprus', 'code')
 				.then(function (old_code) {
-					if ((urlParams.get('state') === "erpnext_state_b64_encoded") && (new_code !== old_code)) {
-						let doc = r.message;
-							frappe.call({
-								method: "cyprus_banks.cyprus_banks.doctype.bank_of_cyprus.bank_of_cyprus.get_authorization_code",
-								args: {
-									code: new_code
-								},
-								callback: function (response) {
-									if ('error' in response.message) {
-										frappe.msgprint(response.message.error);
-									} else {
-										frappe.msgprint("You succesfully received a new authorization code.");
-									}
-								}
-							});
+					if (new_code !== old_code) {
+						frappe.db.set_value('Bank Of Cyprus', frm.doc.name, 'code', new_code);
+						frappe.msgprint("You succesfully received a new authorization code.");
 					}
 				});
 		}
