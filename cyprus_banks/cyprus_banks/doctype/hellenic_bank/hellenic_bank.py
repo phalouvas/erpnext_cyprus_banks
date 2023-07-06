@@ -78,7 +78,6 @@ def refresh_token():
 
 @frappe.whitelist()
 def create_accounts():
-	frappe.throw(hellenic_bank.get_password("client_secret"))
 	refresh_token()
 	hellenic_bank = frappe.get_doc("Hellenic Bank")
 	authorization_code = json.loads(hellenic_bank.authorization_code)
