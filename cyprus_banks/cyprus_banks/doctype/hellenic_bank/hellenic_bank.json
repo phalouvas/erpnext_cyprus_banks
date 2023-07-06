@@ -38,13 +38,13 @@
   {
    "fieldname": "code",
    "fieldtype": "Data",
-   "hidden": 0,
+   "hidden": 1,
    "label": "Code"
   },
   {
    "fieldname": "authorization_code",
    "fieldtype": "JSON",
-   "hidden": 0,
+   "hidden": 1,
    "label": "Authorization Code"
   },
   {
