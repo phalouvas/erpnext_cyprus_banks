@@ -45,7 +45,7 @@ frappe.ui.form.on('Hellenic Bank', {
 			frappe.db.get_single_value('Hellenic Bank', 'code')
 				.then(function (old_code) {
 					if ((urlParams.get('state') === "erpnext_state_b64_encoded") && (new_code !== old_code)) {
-						frappe.db.set_value('Hellenic Bank', '', 'code', urlParams.get('code'))
+						frappe.db.set_value('Hellenic Bank', frm.doc.name, 'code', new_code)
 							.then(r => {
 								let doc = r.message;
 								frappe.call({
