@@ -40,6 +40,7 @@ def get_authorization_code():
 	headers = {
 		"Authorization": "Basic " + base64.b64encode(string_to_encode.encode("utf-8")).decode("utf-8")
 	}
+	frappe.log_error("Basic " + base64.b64encode(string_to_encode.encode("utf-8")).decode("utf-8"))
 
 	response = requests.post(url, data=payload, headers=headers)
 	if (response.status_code != 200):
