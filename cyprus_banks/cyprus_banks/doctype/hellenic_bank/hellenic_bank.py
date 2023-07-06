@@ -37,7 +37,6 @@ def get_authorization_code():
 		"code": hellenic_bank.code
 	}
 	string_to_encode = hellenic_bank.client_id + ':' + hellenic_bank.get_password("client_secret")
-	print(hellenic_bank.get_password("client_secret"))
 	headers = {
 		"Authorization": "Basic " + base64.b64encode(string_to_encode.encode("utf-8")).decode("utf-8")
 		
@@ -79,6 +78,7 @@ def refresh_token():
 
 @frappe.whitelist()
 def create_accounts():
+	frappe.throw(hellenic_bank.get_password("client_secret"))
 	refresh_token()
 	hellenic_bank = frappe.get_doc("Hellenic Bank")
 	authorization_code = json.loads(hellenic_bank.authorization_code)
