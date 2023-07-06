@@ -1,0 +1,43 @@
+{
+ "charts": [],
+ "content": "[{\"id\":\"WpyfKb5Cxs\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Cyprus Banks</span>\",\"col\":12}},{\"id\":\"PzhzgGvi0z\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Hellenic Bank\",\"col\":3}},{\"id\":\"huf2KDmWEO\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Bank Of Cyprus\",\"col\":3}}]",
+ "creation": "2023-07-06 07:29:26.945777",
+ "custom_blocks": [],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "for_user": "",
+ "hide_custom": 0,
+ "icon": "income",
+ "idx": 0,
+ "is_hidden": 0,
+ "label": "Cyprus Banks",
+ "links": [],
+ "modified": "2023-07-06 07:38:08.659272",
+ "modified_by": "Administrator",
+ "module": "Cyprus Banks",
+ "name": "Cyprus Banks",
+ "number_cards": [],
+ "owner": "Administrator",
+ "parent_page": "",
+ "public": 1,
+ "quick_lists": [],
+ "roles": [],
+ "sequence_id": 32.0,
+ "shortcuts": [
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Hellenic Bank",
+   "link_to": "Hellenic Bank",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Bank Of Cyprus",
+   "link_to": "Bank Of Cyprus",
+   "type": "DocType"
+  }
+ ],
+ "title": "Cyprus Banks"
+}
